@@ -1,0 +1,150 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Monte Carlo Stock Price Simulation</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .chart-container {
+            width: 100%;
+            height: 600px;
+            margin-top: 20px;
+        }
+        h1, h2 {
+            color: #333;
+        }
+        .params {
+            background-color: #f5f5f5;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Monte Carlo Stock Price Simulation</h1>
+        
+        <div class="params">
+            <h2>Simulation Parameters</h2>
+            <p><strong>Initial Stock Price:</strong> $100</p>
+            <p><strong>Expected Annual Return:</strong> 8%</p>
+            <p><strong>Annual Volatility:</strong> 20%</p>
+            <p><strong>Time Period:</strong> 1 years</p>
+            <p><strong>Number of Paths:</strong> 1000</p>
+        </div>
+        
+        <div class="chart-container">
+            <canvas id="stockChart"></canvas>
+        </div>
+    </div>
+
+    <script>
+        // Function to load CSV data
+        async function loadCSV(url) {
+            const response = await fetch(url);
+            const data = await response.text();
+            return data.split('\n').map(row => row.split(','));
+        }
+
+        // Function to generate random colors
+        function getRandomColor() {
+            const letters = '0123456789ABCDEF';
+            let color = '#';
+            for (let i = 0; i < 6; i++) {
+                color += letters[Math.floor(Math.random() * 16)];
+            }
+            return color;
+        }
+
+        // Main function to load data and create chart
+        async function createChart() {
+            try {
+                const pathsData = await loadCSV('stock_price_paths.csv');
+                
+                // Parse header for time points
+                const timePoints = pathsData[0].slice(1).map(parseFloat);
+                
+                // Create datasets for each path
+                const datasets = [];
+                
+                // Limit to showing only 20 paths for better visualization
+                const maxPathsToShow = 20;
+                const pathsToShow = Math.min(1000, maxPathsToShow);
+                
+                for (let i = 1; i <= pathsToShow; i++) {
+                    const pathValues = pathsData[i].slice(1).map(parseFloat);
+                    
+                    datasets.push({
+                        label: `Path ${i}`,
+                        data: pathValues,
+                        borderColor: getRandomColor(),
+                        backgroundColor: 'transparent',
+                        borderWidth: 1,
+                        pointRadius: 0
+                    });
+                }
+                
+                // Create the chart
+                const ctx = document.getElementById('stockChart').getContext('2d');
+                const stockChart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: timePoints,
+                        datasets: datasets
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            title: {
+                                display: true,
+                                text: 'Stock Price Simulation Paths',
+                                font: {
+                                    size: 16
+                                }
+                            },
+                            legend: {
+                                display: false
+                            },
+                            tooltip: {
+                                mode: 'index',
+                                intersect: false
+                            }
+                        },
+                        scales: {
+                            x: {
+                                title: {
+                                    display: true,
+                                    text: 'Time (years)'
+                                }
+                            },
+                            y: {
+                                title: {
+                                    display: true,
+                                    text: 'Stock Price ($)'
+                                }
+                            }
+                        }
+                    }
+                });
+            } catch (error) {
+                console.error('Error loading data:', error);
+                document.body.innerHTML += `<p style="color: red">Error loading data: ${error.message}</p>`;
+            }
+        }
+
+        // Call the function when the page loads
+        window.onload = createChart;
+    </script>
+</body>
+</html>
+    

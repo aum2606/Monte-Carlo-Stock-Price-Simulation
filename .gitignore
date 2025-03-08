@@ -1,0 +1,57 @@
+# Build directories and files
+build/
+out/
+cmake-build-*/
+CMakeCache.txt
+CMakeFiles/
+CMakeScripts/
+Testing/
+Makefile
+cmake_install.cmake
+install_manifest.txt
+compile_commands.json
+CTestTestfile.cmake
+_deps/
+
+# Compiled files
+*.slo
+*.lo
+*.o
+*.obj
+*.gch
+*.pch
+*.so
+*.dylib
+*.dll
+*.mod
+*.smod
+*.lai
+*.la
+*.a
+*.lib
+*.exe
+*.out
+*.app
+
+# IDE specific files
+.vs/
+.vscode/
+*.swp
+*.swo
+.idea/
+*.cbp
+*.user
+
+# OS specific files
+.DS_Store
+Thumbs.db
+
+# Keep all code and results
+!*.cpp
+!*.h
+!*.hpp
+!*.txt
+!*.md
+!*.csv
+!*.html
+!LICENSE
